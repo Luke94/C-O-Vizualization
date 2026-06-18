@@ -2,10 +2,13 @@
   --page: #070825;
   --panel: #0055c8;
   --panel-dark: #0c1232;
-  --card: #f7f9fc;
+  --card: #17191d;
+  --card-input: #111316;
+  --card-border: #454a52;
   --text: #ecf3ff;
-  --text-dark: #303846;
-  --line: #3c4654;
+  --text-dark: #d8d0c5;
+  --muted-text: #8f8b84;
+  --line: #5f5a50;
   --same: #062f1c;
   --same-accent: #00e733;
   --different: #600000;
@@ -67,31 +70,6 @@ select {
   font-size: 42px;
 }
 
-.record-strip {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 76px;
-  margin-bottom: 14px;
-}
-
-.record-strip div {
-  background: rgba(0, 0, 0, 0.18);
-  border-radius: 6px;
-  padding: 10px 14px;
-}
-
-.record-strip span {
-  display: block;
-  font-size: 12px;
-  opacity: 0.75;
-}
-
-.record-strip strong {
-  display: block;
-  margin-top: 2px;
-  font-size: 18px;
-}
-
 .compare-grid {
   display: flex;
   flex-direction: column;
@@ -142,6 +120,14 @@ select {
   font-weight: 500;
 }
 
+.value-card.next-value {
+  grid-template-columns: 1fr;
+}
+
+.value-card.next-value strong {
+  justify-content: flex-start;
+}
+
 .arrow-cell {
   display: flex;
   align-items: center;
@@ -169,7 +155,7 @@ select {
 .file-card {
   background: var(--card);
   color: var(--text-dark);
-  border: 2px solid #bac5d3;
+  border: 2px solid var(--card-border);
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.12);
@@ -208,18 +194,24 @@ select {
   width: 100%;
   padding: 9px 10px;
   border: 0;
-  border-top: 1px solid #d6dce5;
+  border-top: 1px solid var(--card-border);
   color: var(--text-dark);
   text-align: center;
   outline: none;
-  background: #ffffff;
+  background: var(--card-input);
 }
 
 .machine-card-main input {
-  border: 2px solid #d6dce5;
+  border: 2px solid #2b3038;
   border-radius: 4px;
   font-size: 18px;
   font-weight: 700;
+}
+
+
+.machine-card input::placeholder {
+  color: var(--muted-text);
+  opacity: 1;
 }
 
 .search-button {
@@ -256,8 +248,8 @@ select {
   margin-top: 12px;
   padding: 10px 12px;
   text-align: center;
-  background: #e9eef6;
-  border: 1px dashed #7b8797;
+  background: #20252d;
+  border: 1px dashed #69717e;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 800;
