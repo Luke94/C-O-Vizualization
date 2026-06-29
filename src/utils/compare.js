@@ -1,4 +1,4 @@
-import { COMPARE_FIELDS, EXCEL_COLUMNS } from "../config/fields.js";
+import { COMPARE_FIELDS, EXCEL_COLUMNS, FIELD_REFERENCE_IMAGES } from "../config/fields.js";
 import { displayValue, toComparable } from "./normalize.js";
 
 export function compareRecords(currentRecord, nextRecord) {
@@ -14,7 +14,8 @@ export function compareRecords(currentRecord, nextRecord) {
       ...field,
       currentValue: displayValue(currentValue),
       nextValue: displayValue(nextValue),
-      same
+      same,
+      referenceImage: FIELD_REFERENCE_IMAGES[field.key] ?? null
     };
   });
 }

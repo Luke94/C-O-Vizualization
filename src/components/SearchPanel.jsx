@@ -1,49 +1,78 @@
-export default function SearchPanel({ inputs, onInputChange, onSearch, onFileLoad, loading, meta }) {
+function FilterInput({ id, value, onChange, placeholder, listId, options }) {
+  return (
+    <>
+      <input
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        list={listId}
+      />
+      <datalist id={listId}>
+        {options.map((option) => (
+          <option key={option} value={option} />
+        ))}
+      </datalist>
+    </>
+  );
+}
+
+export default function SearchPanel({ inputs, onInputChange, onSearch, onFileLoad, loading, meta, options }) {
   return (
     <aside className="side-panel">
       <section className="machine-card machine-card-main">
         <label htmlFor="machine">Číslo stroje</label>
-        <input
+        <FilterInput
           id="machine"
           value={inputs.machine}
-          onChange={(event) => onInputChange("machine", event.target.value)}
+          onChange={(value) => onInputChange("machine", value)}
           placeholder="např. S-002AB"
+          listId="machine-options"
+          options={options.machine}
         />
       </section>
 
       <section className="machine-card">
         <h2>Aktuálně nastaveno</h2>
         <label htmlFor="current-tool">Číslo nástroje</label>
-        <input
+        <FilterInput
           id="current-tool"
           value={inputs.currentTool}
-          onChange={(event) => onInputChange("currentTool", event.target.value)}
+          onChange={(value) => onInputChange("currentTool", value)}
           placeholder="např. 20304"
+          listId="current-tool-options"
+          options={options.currentTool}
         />
         <label htmlFor="current-pn">PN výrobku</label>
-        <input
+        <FilterInput
           id="current-pn"
           value={inputs.currentPn}
-          onChange={(event) => onInputChange("currentPn", event.target.value)}
+          onChange={(value) => onInputChange("currentPn", value)}
           placeholder={meta.pnColumn ? "použije se pro filtr" : "zatím bez sloupce v Excelu"}
+          listId="current-pn-options"
+          options={options.currentPn}
         />
       </section>
 
       <section className="machine-card">
         <h2>Další výroba</h2>
         <label htmlFor="next-tool">Číslo nástroje</label>
-        <input
+        <FilterInput
           id="next-tool"
           value={inputs.nextTool}
-          onChange={(event) => onInputChange("nextTool", event.target.value)}
+          onChange={(value) => onInputChange("nextTool", value)}
           placeholder="např. 275758"
+          listId="next-tool-options"
+          options={options.nextTool}
         />
         <label htmlFor="next-pn">PN výrobku</label>
-        <input
+        <FilterInput
           id="next-pn"
           value={inputs.nextPn}
-          onChange={(event) => onInputChange("nextPn", event.target.value)}
+          onChange={(value) => onInputChange("nextPn", value)}
           placeholder={meta.pnColumn ? "použije se pro filtr" : "zatím bez sloupce v Excelu"}
+          listId="next-pn-options"
+          options={options.nextPn}
         />
       </section>
 

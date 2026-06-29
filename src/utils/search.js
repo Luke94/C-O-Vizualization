@@ -21,7 +21,9 @@ export function findMatchingRecords(rows, filters, pnColumn) {
 }
 
 export function getSearchStatus(matches, filters) {
-  if (!isFilled(filters.machine) || !isFilled(filters.tool)) return "waiting";
+  const machine = toComparable(filters.machine);
+
+  if (!isFilled(machine) || machine === "s-" || !isFilled(filters.tool)) return "waiting";
   if (matches.length === 0) return "not-found";
   if (matches.length > 1) return "multiple";
   return "found";

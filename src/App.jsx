@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import ComparisonTable from "./components/ComparisonTable.jsx";
 import MatchResolver from "./components/MatchResolver.jsx";
 import SearchPanel from "./components/SearchPanel.jsx";
+import { EXCEL_COLUMNS } from "./config/fields.js";
 import { compareRecords } from "./utils/compare.js";
 import { loadDefaultWorkbookRows, loadRowsFromFile } from "./utils/excel.js";
+import { displayValue, isFilled, toComparable } from "./utils/normalize.js";
 import { findMatchingRecords, getSearchStatus } from "./utils/search.js";
 
 const DEFAULT_INPUTS = {
-  machine: "",
+  machine: "S-",
   currentTool: "",
   currentPn: "",
   nextTool: "",
@@ -41,7 +43,8 @@ export default function App() {
   }
 
   function handleInputChange(key, value) {
-    setInputs((current) => ({ ...current, [key]: value }));
+    const normalizedValue = key === "machine" ? normalizeMachineInput(value) : value;
+    setInputs((current) => ({ ...current, [key]: normalizedValue }));
     setHasSearched(false);
     setCurrentSelectedIndex(0);
     setNextSelectedIndex(0);
@@ -63,6 +66,7 @@ export default function App() {
       setError(loadError.message);
     } finally {
       setLoading(false);
+      event.target.value = "";
     }
   }
 
@@ -102,6 +106,32 @@ export default function App() {
   const nextRecord = nextMatches[nextSelectedIndex] ?? null;
   const comparisonRows = compareRecords(currentRecord, nextRecord);
 
+  const filterOptions = useMemo(() => {
+    const machine = toComparable(inputs.machine);
+    const currentTool = toComparable(inputs.currentTool);
+    const nextTool = toComparable(inputs.nextTool);
+    const isSpecificMachine = isFilled(machine) && machine !== "s-";
+    const rowsForMachine = isSpecificMachine
+      ? database.rows.filter((row) => toComparable(row[EXCEL_COLUMNS.machine]) === machine)
+      : database.rows;
+
+    const currentRows = isFilled(currentTool)
+      ? rowsForMachine.filter((row) => toComparable(row[EXCEL_COLUMNS.tool]) === currentTool)
+      : rowsForMachine;
+
+    const nextRows = isFilled(nextTool)
+      ? rowsForMachine.filter((row) => toComparable(row[EXCEL_COLUMNS.tool]) === nextTool)
+      : rowsForMachine;
+
+    return {
+      machine: getUniqueValues(database.rows, EXCEL_COLUMNS.machine),
+      currentTool: getUniqueValues(rowsForMachine, EXCEL_COLUMNS.tool),
+      nextTool: getUniqueValues(rowsForMachine, EXCEL_COLUMNS.tool),
+      currentPn: getUniqueValues(currentRows, database.pnColumn),
+      nextPn: getUniqueValues(nextRows, database.pnColumn)
+    };
+  }, [database.pnColumn, database.rows, inputs.currentTool, inputs.machine, inputs.nextTool]);
+
   const meta = {
     sheetName: database.sheetName,
     rowCount: database.rows.length,
@@ -139,7 +169,33 @@ export default function App() {
         onFileLoad={handleFileLoad}
         loading={loading}
         meta={meta}
+        options={filterOptions}
       />
     </div>
   );
+}
+
+function normalizeMachineInput(value) {
+  const enteredValue = String(value ?? "").trim();
+
+  if (!enteredValue || toComparable(enteredValue) === "s-") {
+    return "S-";
+  }
+
+  return toComparable(enteredValue).startsWith("s-") ? enteredValue : `S-${enteredValue}`;
+}
+
+function getUniqueValues(rows, key) {
+  if (!key) return [];
+
+  const values = new Set();
+
+  for (const row of rows) {
+    const value = displayValue(row[key]);
+    if (value !== "—") {
+      values.add(value);
+    }
+  }
+
+  return [...values].sort((a, b) => a.localeCompare(b, "cs-CZ", { numeric: true, sensitivity: "base" }));
 }

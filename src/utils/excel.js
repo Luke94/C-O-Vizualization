@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
-import { PN_COLUMN_CANDIDATES } from "../config/fields.js";
-import { toComparable } from "./normalize.js";
+import { EXCEL_COLUMNS, FIELD_HEADER_ALIASES, PN_COLUMN_CANDIDATES } from "../config/fields.js";
+import { toHeaderComparable } from "./normalize.js";
 
 const DEFAULT_FILE_NAME = "Příprava k upínání.xlsx";
 export const DEFAULT_EXCEL_URL = `${import.meta.env.BASE_URL}mock/${encodeURIComponent(DEFAULT_FILE_NAME)}`;
@@ -32,29 +32,76 @@ function parseWorkbook(buffer) {
   const sheet = workbook.Sheets[firstSheetName];
   const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
   const headers = rows.length ? Object.keys(rows[0]) : [];
-  const pnColumn = findPnColumn(headers);
+  const normalizedRows = normalizeWorkbookRows(rows, headers);
+  const pnColumn = findPnColumn(headers, normalizedRows);
 
   return {
     sheetName: firstSheetName,
-    rows,
+    rows: normalizedRows,
     headers,
     pnColumn
   };
 }
 
-function findPnColumn(headers) {
+function normalizeWorkbookRows(rows, headers) {
+  const resolvedHeaders = resolveHeaders(headers);
+
+  return rows.map((row) => {
+    const normalizedRow = { ...row };
+
+    for (const [fieldKey, expectedHeader] of Object.entries(EXCEL_COLUMNS)) {
+      const actualHeader = resolvedHeaders[fieldKey];
+      if (actualHeader) {
+        normalizedRow[expectedHeader] = row[actualHeader] ?? "";
+      } else if (!(expectedHeader in normalizedRow)) {
+        normalizedRow[expectedHeader] = "";
+      }
+    }
+
+    return normalizedRow;
+  });
+}
+
+function resolveHeaders(headers) {
   const normalizedHeaders = headers.map((header) => ({
     original: header,
-    normalized: toComparable(header)
+    normalized: toHeaderComparable(header)
+  }));
+
+  const resolved = {};
+
+  for (const [fieldKey, aliases] of Object.entries(FIELD_HEADER_ALIASES)) {
+    for (const alias of aliases) {
+      const found = normalizedHeaders.find(({ normalized }) => normalized === toHeaderComparable(alias));
+      if (found) {
+        resolved[fieldKey] = found.original;
+        break;
+      }
+    }
+  }
+
+  return resolved;
+}
+
+function findPnColumn(headers, rows) {
+  const normalizedHeaders = headers.map((header) => ({
+    original: header,
+    normalized: toHeaderComparable(header)
   }));
 
   for (const candidate of PN_COLUMN_CANDIDATES) {
-    const found = normalizedHeaders.find(({ normalized }) =>
-      normalized === toComparable(candidate)
-    );
-
+    const found = normalizedHeaders.find(({ normalized }) => normalized === toHeaderComparable(candidate));
     if (found) return found.original;
   }
 
-  return "";
+  const fallbackHeader = headers.find((header) => {
+    const comparable = toHeaderComparable(header);
+    return comparable.includes("pn");
+  });
+
+  if (fallbackHeader) return fallbackHeader;
+
+  const firstRow = rows[0] ?? {};
+  const firstDetected = Object.keys(firstRow).find((header) => toHeaderComparable(header).includes("pn"));
+  return firstDetected ?? "";
 }
