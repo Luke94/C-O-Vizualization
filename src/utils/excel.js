@@ -1,9 +1,9 @@
 import * as XLSX from "xlsx";
+import defaultWorkbookUrl from "../assets/preparation.xlsx?url";
 import { EXCEL_COLUMNS, FIELD_HEADER_ALIASES, PN_COLUMN_CANDIDATES } from "../config/fields.js";
 import { toHeaderComparable } from "./normalize.js";
 
-const DEFAULT_FILE_NAME = "Příprava k upínání.xlsx";
-export const DEFAULT_EXCEL_URL = `${import.meta.env.BASE_URL}mock/${encodeURIComponent(DEFAULT_FILE_NAME)}`;
+export const DEFAULT_EXCEL_URL = defaultWorkbookUrl;
 
 export async function loadDefaultWorkbookRows() {
   const response = await fetch(DEFAULT_EXCEL_URL);

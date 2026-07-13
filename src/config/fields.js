@@ -1,3 +1,4 @@
+import upinkyImageUrl from "../assets/upinky-a-f.png";
 export const EXCEL_COLUMNS = {
   machine: "stroj",
   tool: "nastroj",
@@ -98,7 +99,7 @@ export const FIELD_REFERENCE_IMAGES = {
   clamps: {
     buttonLabel: "Náhled",
     title: "Typy upínek A–F",
-    src: `${import.meta.env.BASE_URL}reference/upinky-a-f.png`
+    src: upinkyImageUrl
   }
 };
 

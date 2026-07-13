@@ -2,11 +2,7 @@ import { EXCEL_COLUMNS } from "../config/fields.js";
 import { displayValue } from "../utils/normalize.js";
 
 export default function MatchResolver({ title, status, matches, selectedIndex, onSelect }) {
-  if (status === "waiting" || status === "found") return null;
-
-  if (status === "not-found") {
-    return <div className="message error">{title}: záznam nebyl nalezen.</div>;
-  }
+  if (status !== "multiple") return null;
 
   return (
     <div className="message warning">

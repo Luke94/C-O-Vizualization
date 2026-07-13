@@ -1,14 +1,14 @@
 import { useState } from "react";
 import ImageModal from "./ImageModal.jsx";
 
-export default function ComparisonTable({ rows, currentRecord, nextRecord }) {
+export default function ComparisonTable({ rows, currentRecord, nextRecord, emptyTitle = "C/O Visualization", emptyMessage = "Zadej číslo stroje, aktuální nástroj a další nástroj. Potom spusť porovnání." }) {
   const [activeImage, setActiveImage] = useState(null);
 
   if (!currentRecord || !nextRecord) {
     return (
       <main className="comparison-shell empty-state">
-        <h1>C/O Visualization</h1>
-        <p>Zadej číslo stroje, aktuální nástroj a další nástroj. Potom spusť porovnání.</p>
+        <h1>{emptyTitle}</h1>
+        <p>{emptyMessage}</p>
       </main>
     );
   }
