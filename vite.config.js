@@ -1,14 +1,18 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
+  // Relative asset paths allow deployment below an IIS virtual directory.
   base: "./",
-  plugins: [
-    react(),
-    viteSingleFile()
-  ],
+  plugins: [react()],
   build: {
-    assetsInlineLimit: 100000000
+    outDir: "dist/client",
+    emptyOutDir: true
+  },
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+      "/data": "http://localhost:3000"
+    }
   }
 });

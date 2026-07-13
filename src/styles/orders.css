@@ -1,0 +1,493 @@
+/* Shared order flow: master and setter views */
+.app-shell {
+  min-height: 100vh;
+  padding: 12px;
+  background: var(--page);
+}
+
+.mode-switch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: #10163a;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
+}
+
+.mode-switch-bar strong,
+.mode-switch-bar span {
+  display: block;
+}
+
+.mode-switch-bar strong {
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+.mode-switch-bar span {
+  color: #aebbd0;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #070b24;
+}
+
+.mode-switch button {
+  min-width: 130px;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  color: #dfe9ff;
+  background: transparent;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mode-switch button.active {
+  color: #06102d;
+  background: #f5f8ff;
+}
+
+.mode-switch button span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  margin-left: 6px;
+  border-radius: 999px;
+  color: #06102d;
+  background: #ffb800;
+  font-size: 12px;
+}
+
+.app-shell > .app-layout {
+  min-height: calc(100vh - 92px);
+  padding: 0;
+}
+
+.master-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  min-height: calc(100vh - 92px);
+}
+
+.master-canvas {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-content: center;
+  min-width: 0;
+  min-height: calc(100vh - 92px);
+  padding: 28px 20px;
+  border: 1px solid #00d9ff;
+  border-radius: 2px;
+  background: var(--panel);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.master-form-stack {
+  width: min(260px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.master-machine-card.machine-card-main label {
+  font-size: 30px;
+  margin-bottom: 0;
+}
+
+.master-machine-card input {
+  margin-top: 12px;
+}
+
+.priority-card h2 {
+  padding-bottom: 12px;
+}
+
+.priority-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+}
+
+.priority-buttons button {
+  min-height: 42px;
+  border: 2px solid #3b4350;
+  border-radius: 7px;
+  color: var(--text-dark);
+  background: var(--card-input);
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.priority-buttons button.active {
+  color: #06102d;
+  border-color: #ffb800;
+  background: #ffb800;
+}
+
+.machine-card .checkbox-row {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px !important;
+  border-top: 1px solid var(--line) !important;
+  color: var(--text-dark);
+  font-size: 12px !important;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.machine-card .checkbox-row input {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  accent-color: #ffb800;
+}
+
+.machine-card input:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.master-feedback {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.master-side-panel,
+.setter-side-panel {
+  min-width: 0;
+}
+
+.send-order-button {
+  min-height: 64px;
+  color: #05080f;
+  background: #0a5dc8;
+  color: #000;
+  font-size: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+}
+
+.order-list-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+  max-height: 470px;
+  padding: 14px;
+  overflow: hidden;
+  border: 2px solid #d2d8e2;
+  border-radius: 7px;
+  background: #f8fafc;
+  color: #243546;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.12);
+}
+
+.order-list-card h2 {
+  margin: 0;
+  font-size: 18px;
+  text-align: center;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+.empty-orders {
+  margin: auto;
+  color: #5b6776;
+  text-align: center;
+  font-weight: 700;
+}
+
+.order-item {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 12px;
+  border: 2px solid #263445;
+  border-radius: 6px;
+  text-align: left;
+  color: white;
+  background: #2d4859;
+  cursor: pointer;
+}
+
+.order-item.selected {
+  outline: 3px solid #ffffff;
+  outline-offset: 1px;
+}
+
+.order-item.prepared {
+  color: #06210c;
+  background: #00b81f;
+}
+
+.order-item.priority-1:not(.prepared) {
+  color: #06102d;
+  background: #ffb800;
+}
+
+.order-item.priority-2:not(.prepared) {
+  background: #1259d8;
+}
+
+.order-item.priority-3:not(.prepared) {
+  background: #2d4859;
+}
+
+.order-machine {
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.order-tools {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.order-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  opacity: 0.95;
+}
+
+.order-meta b {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.selected-order-cards,
+.selected-order-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.selected-order-empty {
+  padding: 18px;
+  border: 2px solid var(--card-border);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.selected-order-empty h2,
+.selected-order-empty p {
+  margin: 0;
+}
+
+.mini-info-card {
+  overflow: hidden;
+  border: 2px solid var(--card-border);
+  border-radius: 7px;
+  background: #f8fafc;
+  color: #2e3c4b;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.12);
+}
+
+.mini-info-card strong,
+.mini-info-card span {
+  display: block;
+  padding: 8px 10px;
+}
+
+.mini-info-card strong {
+  font-size: 16px;
+  border-bottom: 2px solid var(--line);
+}
+
+.mini-info-card span {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.mini-info-card.big-title {
+  padding: 18px 10px;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.setter-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.ready-button,
+.done-button,
+.primary-button,
+.secondary-button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 7px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ready-button {
+  color: #061b0b;
+  background: #00c928;
+}
+
+.done-button {
+  color: #fff;
+  background: #8f1111;
+}
+
+.ready-button:disabled,
+.done-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.message.success {
+  border-left-color: #00c928;
+}
+
+.file-card.compact {
+  padding: 10px;
+}
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.confirm-modal {
+  width: min(560px, 100%);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: #10163a;
+  color: var(--text);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-modal h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.confirm-modal p {
+  margin: 0 0 14px;
+  color: #c6d0e4;
+}
+
+.confirm-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.confirm-summary div {
+  padding: 10px;
+  border-radius: 8px;
+  background: #070b24;
+}
+
+.confirm-summary strong,
+.confirm-summary span {
+  display: block;
+}
+
+.confirm-summary strong {
+  color: #9fb1ce;
+  font-size: 12px;
+}
+
+.confirm-summary span {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.primary-button {
+  padding: 0 18px;
+  color: #06102d;
+  background: #ffb800;
+}
+
+.secondary-button {
+  padding: 0 18px;
+  color: #e9f0ff;
+  background: #26314f;
+}
+
+
+.connection-label {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+}
+
+.connection-label i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.65);
+}
+
+.connection-label i.online {
+  background: #00d83a;
+  box-shadow: 0 0 10px rgba(0, 216, 58, 0.65);
+}
+
+.file-load-button.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

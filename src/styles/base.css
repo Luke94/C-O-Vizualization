@@ -1,0 +1,41 @@
+:root {
+  --page: #070825;
+  --panel: #0055c8;
+  --panel-dark: #0c1232;
+  --card: #17191d;
+  --card-input: #111316;
+  --card-border: #454a52;
+  --text: #ecf3ff;
+  --text-dark: #d8d0c5;
+  --muted-text: #8f8b84;
+  --line: #5f5a50;
+  --same: #062f1c;
+  --same-accent: #00e733;
+  --different: #600000;
+  --different-accent: #ff1d00;
+  --warning: #ffcf5a;
+  --error: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--text);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

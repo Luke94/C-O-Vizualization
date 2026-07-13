@@ -1,21 +1,30 @@
 {
-  "name": "c-o-vizualization",
+  "name": "c-o-visualization",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
+  "engines": {
+    "node": ">=20 <23"
+  },
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -n API,WEB \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --watch server/server.js",
+    "dev:client": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "start": "node server/server.js",
+    "check": "node --check server/server.js && node --check server/app.js && node --check server/config.js",
+    "test": "node --test server/tests/orderStore.test.js"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "xlsx": "^0.18.5"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "read-excel-file": "^9.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.4.0",
-    "vite-plugin-singlefile": "^2.3.3"
+    "concurrently": "^9.1.2",
+    "vite": "^6.4.0"
   }
 }

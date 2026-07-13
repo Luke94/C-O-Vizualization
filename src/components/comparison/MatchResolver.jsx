@@ -1,5 +1,5 @@
-import { EXCEL_COLUMNS } from "../config/fields.js";
-import { displayValue } from "../utils/normalize.js";
+import { EXCEL_COLUMNS } from "../../config/fields.js";
+import { displayValue } from "../../utils/normalize.js";
 
 export default function MatchResolver({ title, status, matches, selectedIndex, onSelect }) {
   if (status !== "multiple") return null;

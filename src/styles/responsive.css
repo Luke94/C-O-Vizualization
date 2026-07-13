@@ -1,0 +1,76 @@
+/* Layout adaptations are kept separate from component styling. */
+@media (max-width: 1100px) {
+  .app-layout,
+  .master-layout,
+  .app-shell > .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side-panel,
+  .master-side-panel,
+  .setter-side-panel {
+    order: -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    align-items: start;
+  }
+
+  .master-canvas {
+    min-height: 620px;
+  }
+}
+
+@media (max-width: 820px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .app-layout {
+    padding: 14px;
+  }
+
+  .mode-switch-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mode-switch {
+    width: 100%;
+  }
+
+  .mode-switch button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .side-panel,
+  .master-side-panel,
+  .setter-side-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .master-layout,
+  .app-shell > .app-layout {
+    gap: 12px;
+  }
+
+  .comparison-shell {
+    padding: 10px;
+  }
+
+  .compare-grid {
+    min-width: 630px;
+  }
+
+  .master-canvas {
+    padding: 20px 12px;
+  }
+
+  .confirm-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .confirm-actions {
+    flex-direction: column;
+  }
+}

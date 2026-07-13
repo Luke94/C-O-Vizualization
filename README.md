@@ -1,43 +1,60 @@
 # C/O Visualization
 
-První MVP aplikace pro porovnání aktuálního a následujícího upínání podle Excel databáze.
+Interní React aplikace pro předání objednávky změny výroby od mistra k seřizovači a porovnání aktuálního a následujícího upínání podle sdíleného Excelu.
 
-## Funkce v první verzi
+## Architektura
 
-- načtení výchozího Excelu ze složky `public/mock`
-- možnost ručně načíst jiný Excel přes tlačítko v aplikaci
-- vyhledání aktuálního a dalšího záznamu podle:
-  - číslo stroje
-  - číslo nástroje
-  - PN výrobku je připravené, ale použije se až ve chvíli, kdy bude v Excelu existovat odpovídající sloupec
-- porovnání parametrů upínání
-- zelené řádky = shoda
-- červené řádky = rozdíl
-- upozornění při nenalezeném záznamu
-- výběr záznamu při nalezení více výsledků
+- `src/` — React frontend v JavaScriptu
+- `server/` — malé Express API v JavaScriptu
+- `data/preparation.xlsx` — sdílený zdroj parametrů
+- `data/orders.json` — sdílené objednávky pro MVP
+- `dist/client/` — produkční React build
+- `web.config` — spuštění přes IIS HttpPlatformHandler
 
-## Spuštění ve vývoji
+Objednávky už nejsou uložené v `localStorage`. Mistr a seřizovač proto vidí stejný stav i na různých počítačích. Frontend si změny automaticky obnovuje každé tři sekundy.
+
+## Lokální vývoj
+
+Požadovaný Node.js: 20 LTS.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Potom otevřít adresu, kterou vypíše Vite, typicky:
+- React: `http://localhost:5173`
+- API: `http://localhost:3000/api/health`
 
-```text
-http://localhost:5173
-```
-
-## Build pro použití v prohlížeči
+## Kontroly
 
 ```bash
+npm test
+npm run check
 npm run build
 ```
 
-Výstup bude ve složce `dist`.
+## Produkční build
 
-## Důležité poznámky
+```bash
+npm run build
+npm start
+```
 
-Excel zatím neobsahuje PN výrobku. Aplikace proto v první verzi filtruje podle `stroj + nastroj`.
-Jakmile se do Excelu přidá sloupec například `PN výrobku`, aplikace ho automaticky najde a začne používat pro filtr, pokud bude PN v aplikaci vyplněné.
+Aplikace je potom dostupná na `http://localhost:3000/`.
+
+## Příprava offline release pro IIS
+
+Na Windows PC s internetem spusťte:
+
+```cmd
+deploy\prepare-release.cmd
+```
+
+Výsledná složka `deploy\release\` obsahuje React build, server, runtime data a produkční `node_modules`. Podrobný postup je v `DEPLOYMENT.md`.
+
+## Důležité provozní poznámky
+
+- `data/orders.json`, `data/preparation.xlsx` a `data/backups/` se při aktualizaci nesmí přepsat.
+- IIS identita potřebuje právo zápisu do `data/` a `logs/`.
+- Nahrání nového Excelu lze vypnout přes `ALLOW_DATABASE_UPLOAD=false`.
+- JSON úložiště je vhodné pro jednu instanci aplikace a současný MVP provoz. Přechod na MSSQL lze později udělat bez změny React UI.

@@ -1,46 +1,68 @@
-import * as XLSX from "xlsx";
-import defaultWorkbookUrl from "../assets/preparation.xlsx?url";
+import readExcelFile from "read-excel-file/browser";
 import { EXCEL_COLUMNS, FIELD_HEADER_ALIASES, PN_COLUMN_CANDIDATES } from "../config/fields.js";
 import { toHeaderComparable } from "./normalize.js";
 
-export const DEFAULT_EXCEL_URL = defaultWorkbookUrl;
-
-export async function loadDefaultWorkbookRows() {
-  const response = await fetch(DEFAULT_EXCEL_URL);
+export async function loadRowsFromUrl(url) {
+  const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
-    throw new Error(`Nepodařilo se načíst výchozí Excel: ${response.status}`);
+    throw new Error(`Nepodařilo se načíst sdílený Excel (${response.status}).`);
   }
 
-  const buffer = await response.arrayBuffer();
-  return parseWorkbook(buffer);
+  return parseWorkbook(await response.blob());
 }
 
 export async function loadRowsFromFile(file) {
-  const buffer = await file.arrayBuffer();
-  return parseWorkbook(buffer);
+  return parseWorkbook(file);
 }
 
-function parseWorkbook(buffer) {
-  const workbook = XLSX.read(buffer, { type: "array" });
-  const firstSheetName = workbook.SheetNames[0];
+async function parseWorkbook(input) {
+  const sheets = await readExcelFile(input);
+  const firstSheet = sheets[0];
 
-  if (!firstSheetName) {
+  if (!firstSheet) {
     throw new Error("Excel neobsahuje žádný list.");
   }
 
-  const sheet = workbook.Sheets[firstSheetName];
-  const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-  const headers = rows.length ? Object.keys(rows[0]) : [];
-  const normalizedRows = normalizeWorkbookRows(rows, headers);
-  const pnColumn = findPnColumn(headers, normalizedRows);
+  const [headerRow = [], ...dataRows] = firstSheet.data;
+  const headers = headerRow.map(toHeaderValue);
+  const rows = dataRows
+    .filter((row) => row.some((cell) => cell !== null && String(cell).trim() !== ""))
+    .map((row) => rowToObject(headers, row));
+
+  if (!headers.some(Boolean) || !rows.length) {
+    throw new Error("První list Excelu neobsahuje použitelná data.");
+  }
+
+  const normalizedRows = normalizeWorkbookRows(rows, headers.filter(Boolean));
+  const pnColumn = findPnColumn(headers.filter(Boolean), normalizedRows);
 
   return {
-    sheetName: firstSheetName,
+    sheetName: firstSheet.sheet,
     rows: normalizedRows,
-    headers,
+    headers: headers.filter(Boolean),
     pnColumn
   };
+}
+
+function rowToObject(headers, row) {
+  const record = {};
+
+  headers.forEach((header, index) => {
+    if (header) record[header] = normalizeCellValue(row[index]);
+  });
+
+  return record;
+}
+
+function normalizeCellValue(value) {
+  if (value == null) return "";
+  if (value instanceof Date) return value.toISOString();
+  return value;
+}
+
+function toHeaderValue(value) {
+  return String(value ?? "").trim();
 }
 
 function normalizeWorkbookRows(rows, headers) {
@@ -51,11 +73,7 @@ function normalizeWorkbookRows(rows, headers) {
 
     for (const [fieldKey, expectedHeader] of Object.entries(EXCEL_COLUMNS)) {
       const actualHeader = resolvedHeaders[fieldKey];
-      if (actualHeader) {
-        normalizedRow[expectedHeader] = row[actualHeader] ?? "";
-      } else if (!(expectedHeader in normalizedRow)) {
-        normalizedRow[expectedHeader] = "";
-      }
+      normalizedRow[expectedHeader] = actualHeader ? row[actualHeader] ?? "" : normalizedRow[expectedHeader] ?? "";
     }
 
     return normalizedRow;
@@ -71,13 +89,12 @@ function resolveHeaders(headers) {
   const resolved = {};
 
   for (const [fieldKey, aliases] of Object.entries(FIELD_HEADER_ALIASES)) {
-    for (const alias of aliases) {
-      const found = normalizedHeaders.find(({ normalized }) => normalized === toHeaderComparable(alias));
-      if (found) {
-        resolved[fieldKey] = found.original;
-        break;
-      }
-    }
+    const found = aliases
+      .map((alias) => toHeaderComparable(alias))
+      .map((alias) => normalizedHeaders.find(({ normalized }) => normalized === alias))
+      .find(Boolean);
+
+    if (found) resolved[fieldKey] = found.original;
   }
 
   return resolved;
@@ -94,14 +111,8 @@ function findPnColumn(headers, rows) {
     if (found) return found.original;
   }
 
-  const fallbackHeader = headers.find((header) => {
-    const comparable = toHeaderComparable(header);
-    return comparable.includes("pn");
-  });
-
+  const fallbackHeader = headers.find((header) => toHeaderComparable(header).includes("pn"));
   if (fallbackHeader) return fallbackHeader;
 
-  const firstRow = rows[0] ?? {};
-  const firstDetected = Object.keys(firstRow).find((header) => toHeaderComparable(header).includes("pn"));
-  return firstDetected ?? "";
+  return Object.keys(rows[0] ?? {}).find((header) => toHeaderComparable(header).includes("pn")) ?? "";
 }
