@@ -1,26 +1,25 @@
-# Migration notes — 0.1 → 0.2
+# Přehled technických změn
 
-## Co zůstalo zachované
+## Frontend
 
-- vzhled a barevné rozlišení porovnání
-- režimy Mistr / Seřizovač
-- priority objednávek
-- upozornění při nenalezené kombinaci Lis–Tool
-- ruční výběr při více nalezených záznamech
-- náhled typů upínek
-- logika porovnání stávajícího a dalšího toolu
+- zachovaný React a JavaScript
+- UI rozdělené do samostatných komponent, hooks, API služeb a doménových utilit
+- odstraněný single-file režim
+- odstraněný Vite a jeho React plugin
+- JSX, CSS a obrázky sestavuje jediná lehká build závislost `esbuild`
+- frontend i API běží přes jeden Express server a jeden port
 
-## Co se změnilo
+## Sdílená data
 
-- odstraněn `vite-plugin-singlefile`
-- standardní React build do `dist/client`
-- objednávky přesunuty z `localStorage` do sdíleného Express API
-- centrální Excel přesunut do `data/preparation.xlsx`
-- při nahrání nového Excelu se vytvoří záloha
-- kód rozdělen na API klienta, hooks, doménovou logiku a menší UI komponenty
-- přidán IIS `web.config`, offline release skript a deployment dokumentace
-- Excel parser nyní přijímá pouze `.xlsx`
+- objednávky přesunuté z `localStorage` do serverového JSON úložiště
+- zápisy objednávek probíhají atomicky
+- frontend pravidelně načítá aktuální stav objednávek
+- Excel je uložený centrálně v `data/preparation.xlsx`
+- při výměně Excelu se předchozí verze zálohuje do `data/backups/`
 
-## Provozní omezení MVP
+## Deployment
 
-Objednávky jsou uložené v JSON souboru. Toto řešení je vhodné pro jednu Node instanci na interním serveru. Pokud bude aplikace později běžet ve více instancích nebo bude potřebovat historii a audit, serverovou persistence vrstvu je vhodné nahradit MSSQL.
+- produkční frontend vzniká v `dist/client/`
+- Express servíruje frontend, API i Excel ze stejné aplikace
+- `web.config` spouští Node přes IIS HttpPlatformHandler
+- release skript připraví offline balíček s produkčními závislostmi

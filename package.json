@@ -4,15 +4,13 @@
   "version": "0.2.0",
   "type": "module",
   "engines": {
-    "node": ">=20 <23"
+    "node": ">=20"
   },
   "scripts": {
-    "dev": "concurrently -k -n API,WEB \"npm:dev:server\" \"npm:dev:client\"",
-    "dev:server": "node --watch server/server.js",
-    "dev:client": "vite",
-    "build": "vite build",
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/build.js",
     "start": "node server/server.js",
-    "check": "node --check server/server.js && node --check server/app.js && node --check server/config.js",
+    "check": "node --check server/server.js && node --check server/app.js && node --check server/config.js && node --check scripts/build.js && node --check scripts/dev.js && node --check scripts/client-build.js",
     "test": "node --test server/tests/orderStore.test.js"
   },
   "dependencies": {
@@ -23,8 +21,6 @@
     "read-excel-file": "^9.3.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "concurrently": "^9.1.2",
-    "vite": "^6.4.0"
+    "esbuild": "^0.28.1"
   }
 }

@@ -5,15 +5,18 @@ Interní React aplikace pro předání objednávky změny výroby od mistra k se
 ## Architektura
 
 - `src/` — React frontend v JavaScriptu
-- `server/` — malé Express API v JavaScriptu
+- `server/` — Express API v JavaScriptu
+- `scripts/` — jednoduchý build a vývojové spuštění přes esbuild
 - `data/preparation.xlsx` — sdílený zdroj parametrů
 - `data/orders.json` — sdílené objednávky pro MVP
-- `dist/client/` — produkční React build
+- `dist/client/` — vygenerovaný frontend pro produkční provoz
 - `web.config` — spuštění přes IIS HttpPlatformHandler
 
-Objednávky už nejsou uložené v `localStorage`. Mistr a seřizovač proto vidí stejný stav i na různých počítačích. Frontend si změny automaticky obnovuje každé tři sekundy.
+Projekt nepoužívá single-file build ani Vite. Frontend se sestavuje pomocí esbuild a následně jej společně s API servíruje jeden Node/Express proces.
 
-## Lokální vývoj
+Objednávky nejsou uložené v `localStorage`. Mistr a seřizovač proto vidí stejný stav i na různých počítačích. Frontend si změny automaticky obnovuje každé tři sekundy.
+
+## První spuštění
 
 Požadovaný Node.js: 20 LTS.
 
@@ -22,8 +25,12 @@ npm install
 npm run dev
 ```
 
-- React: `http://localhost:5173`
-- API: `http://localhost:3000/api/health`
+Aplikace i API běží na jedné adrese:
+
+- aplikace: `http://localhost:3000/`
+- health check: `http://localhost:3000/api/health`
+
+Při změně React souborů esbuild frontend automaticky znovu sestaví. V prohlížeči stačí stránku obnovit.
 
 ## Kontroly
 
@@ -33,7 +40,7 @@ npm run check
 npm run build
 ```
 
-## Produkční build
+## Produkční spuštění
 
 ```bash
 npm run build
@@ -50,7 +57,7 @@ Na Windows PC s internetem spusťte:
 deploy\prepare-release.cmd
 ```
 
-Výsledná složka `deploy\release\` obsahuje React build, server, runtime data a produkční `node_modules`. Podrobný postup je v `DEPLOYMENT.md`.
+Výsledná složka `deploy\release\` obsahuje sestavený frontend, server, runtime data a produkční `node_modules`. Podrobný postup je v `DEPLOYMENT.md`.
 
 ## Důležité provozní poznámky
 
