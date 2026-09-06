@@ -73,4 +73,21 @@
   .confirm-actions {
     flex-direction: column;
   }
+
+  .pse-shell {
+    padding: 0 8px 20px;
+  }
+
+  .pse-card {
+    padding: 18px 14px;
+  }
+
+  .mapping-form label,
+  .display-row-item {
+    grid-template-columns: 1fr;
+  }
+
+  .display-row-item .small-button {
+    display: inline-block;
+  }
 }
