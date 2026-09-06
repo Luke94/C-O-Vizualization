@@ -2,21 +2,21 @@ import readExcelFile from "read-excel-file/browser";
 import { EXCEL_COLUMNS, FIELD_HEADER_ALIASES, PN_COLUMN_CANDIDATES } from "../config/fields.js";
 import { toHeaderComparable } from "./normalize.js";
 
-export async function loadRowsFromUrl(url) {
+export async function loadRowsFromUrl(url, columnMapping = {}) {
   const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error(`Nepodařilo se načíst sdílený Excel (${response.status}).`);
   }
 
-  return parseWorkbook(await response.blob());
+  return parseWorkbook(await response.blob(), columnMapping);
 }
 
-export async function loadRowsFromFile(file) {
-  return parseWorkbook(file);
+export async function loadRowsFromFile(file, columnMapping = {}) {
+  return parseWorkbook(file, columnMapping);
 }
 
-async function parseWorkbook(input) {
+async function parseWorkbook(input, columnMapping) {
   const sheets = await readExcelFile(input);
   const firstSheet = sheets[0];
 
@@ -34,7 +34,7 @@ async function parseWorkbook(input) {
     throw new Error("První list Excelu neobsahuje použitelná data.");
   }
 
-  const normalizedRows = normalizeWorkbookRows(rows, headers.filter(Boolean));
+  const normalizedRows = normalizeWorkbookRows(rows, headers.filter(Boolean), columnMapping);
   const pnColumn = findPnColumn(headers.filter(Boolean), normalizedRows);
 
   return {
@@ -65,8 +65,8 @@ function toHeaderValue(value) {
   return String(value ?? "").trim();
 }
 
-function normalizeWorkbookRows(rows, headers) {
-  const resolvedHeaders = resolveHeaders(headers);
+function normalizeWorkbookRows(rows, headers, columnMapping) {
+  const resolvedHeaders = resolveHeaders(headers, columnMapping);
 
   return rows.map((row) => {
     const normalizedRow = { ...row };
@@ -80,7 +80,7 @@ function normalizeWorkbookRows(rows, headers) {
   });
 }
 
-function resolveHeaders(headers) {
+function resolveHeaders(headers, columnMapping = {}) {
   const normalizedHeaders = headers.map((header) => ({
     original: header,
     normalized: toHeaderComparable(header)
@@ -89,6 +89,11 @@ function resolveHeaders(headers) {
   const resolved = {};
 
   for (const [fieldKey, aliases] of Object.entries(FIELD_HEADER_ALIASES)) {
+    const configured = String(columnMapping[fieldKey] ?? "").trim();
+    if (configured && headers.includes(configured)) {
+      resolved[fieldKey] = configured;
+      continue;
+    }
     const found = aliases
       .map((alias) => toHeaderComparable(alias))
       .map((alias) => normalizedHeaders.find(({ normalized }) => normalized === alias))

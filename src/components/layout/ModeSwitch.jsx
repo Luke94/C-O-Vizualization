@@ -16,6 +16,7 @@ export default function ModeSwitch({ mode, onModeChange, orderCount, connected }
         <button type="button" className={mode === "setter" ? "active" : ""} onClick={() => onModeChange("setter")}>
           Seřizovač <span>{orderCount}</span>
         </button>
+        <button type="button" className={mode === "pse" ? "active" : ""} onClick={() => onModeChange("pse")}>PsE</button>
       </nav>
     </header>
   );

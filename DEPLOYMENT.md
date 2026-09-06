@@ -115,6 +115,9 @@ WORKBOOK_FILE=./data/preparation.xlsx
 WORKBOOK_BACKUP_DIR=./data/backups
 ALLOW_DATABASE_UPLOAD=true
 MAX_WORKBOOK_MB=20
+PSE_SETTINGS_FILE=./data/pse-settings.json
+APPLICATION_SETTINGS_FILE=./data/application-settings.json
+PSE_INITIAL_PASSWORD=PsE53100
 ```
 
 `PORT` je určený pro lokální test. V IIS ho automaticky přepíše proměnná `%HTTP_PLATFORM_PORT%`.
@@ -207,6 +210,8 @@ logs\
 ```
 
 Bez práva Modify nebude možné vytvářet objednávky, označovat je jako připravené, mazat je ani nahrávat nový Excel.
+
+Při prvním spuštění se vytvoří hash výchozího PsE hesla. Po prvním přihlášení heslo změňte v PsE rozhraní; do souboru se neukládá v čitelné podobě.
 
 ---
 

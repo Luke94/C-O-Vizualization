@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getDatabaseFileUrl, getDatabaseMeta, uploadDatabase } from "../api/databaseApi.js";
 import { loadRowsFromFile, loadRowsFromUrl } from "../utils/excel.js";
+import { getApplicationSettings } from "../api/pseApi.js";
 
 const EMPTY_DATABASE = { rows: [], sheetName: "", headers: [], pnColumn: "" };
 const META_REFRESH_INTERVAL_MS = 10000;
@@ -12,9 +13,11 @@ export function useWorkbook() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const updatedAtRef = useRef("");
+  const [columnMapping, setColumnMapping] = useState({});
+  const columnMappingRef = useRef({});
 
-  const applyWorkbook = useCallback(async (meta) => {
-    const workbook = await loadRowsFromUrl(getDatabaseFileUrl(meta.updatedAt || Date.now()));
+  const applyWorkbook = useCallback(async (meta, mapping) => {
+    const workbook = await loadRowsFromUrl(getDatabaseFileUrl(meta.updatedAt || Date.now()), mapping);
     updatedAtRef.current = meta.updatedAt || "";
     setDatabase(workbook);
     setServerMeta(meta);
@@ -23,8 +26,11 @@ export function useWorkbook() {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const meta = await getDatabaseMeta();
-      await applyWorkbook(meta);
+      const [meta, settings] = await Promise.all([getDatabaseMeta(), getApplicationSettings()]);
+      const mapping = settings?.columnMapping ?? {};
+      setColumnMapping(mapping);
+      columnMappingRef.current = mapping;
+      await applyWorkbook(meta, mapping);
       setError("");
     } catch (loadError) {
       setError(loadError.message);
@@ -41,7 +47,7 @@ export function useWorkbook() {
       try {
         const meta = await getDatabaseMeta();
         if (meta.updatedAt && meta.updatedAt !== updatedAtRef.current) {
-          await applyWorkbook(meta);
+          await applyWorkbook(meta, columnMappingRef.current);
         } else {
           setServerMeta(meta);
         }
@@ -59,7 +65,7 @@ export function useWorkbook() {
       setError("");
 
       // Parse first so an invalid workbook never replaces the shared source.
-      const parsedWorkbook = await loadRowsFromFile(file);
+      const parsedWorkbook = await loadRowsFromFile(file, columnMapping);
       const meta = await uploadDatabase(file);
 
       updatedAtRef.current = meta.updatedAt || "";
@@ -72,7 +78,7 @@ export function useWorkbook() {
     } finally {
       setUploading(false);
     }
-  }, []);
+  }, [columnMapping]);
 
   return {
     database,
@@ -89,6 +95,12 @@ export function useWorkbook() {
     error,
     setError,
     reload: load,
-    replace
+    replace,
+    columnMapping,
+    async saveMapping(mapping) {
+      setColumnMapping(mapping);
+      columnMappingRef.current = mapping;
+      await applyWorkbook(serverMeta, mapping);
+    }
   };
 }

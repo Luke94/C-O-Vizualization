@@ -6,4 +6,6 @@ dist
 .vscode
 .idea
 node_modules/
+data/pse-settings.json
+data/application-settings.json
 dist/

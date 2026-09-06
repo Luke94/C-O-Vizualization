@@ -6,6 +6,10 @@ import { createDatabaseRouter } from "./routes/database.js";
 import { createOrdersRouter } from "./routes/orders.js";
 import { OrderStore } from "./services/orderStore.js";
 import { WorkbookStore } from "./services/workbookStore.js";
+import { PseAccess } from "./services/pseAccess.js";
+import { createPseRouter } from "./routes/pse.js";
+import { ApplicationSettingsStore } from "./services/applicationSettingsStore.js";
+import { createApplicationSettingsRouter } from "./routes/applicationSettings.js";
 import { HttpError } from "./utils/httpError.js";
 
 export async function createApp() {
@@ -17,8 +21,10 @@ export async function createApp() {
     allowUpload: config.allowDatabaseUpload,
     maxBytes: config.maxWorkbookBytes
   });
+  const pseAccess = new PseAccess(config.pseSettingsFile, config.pseInitialPassword);
+  const applicationSettings = new ApplicationSettingsStore(config.applicationSettingsFile);
 
-  await Promise.all([orderStore.initialize(), workbookStore.initialize()]);
+  await Promise.all([orderStore.initialize(), workbookStore.initialize(), pseAccess.initialize(), applicationSettings.initialize()]);
 
   app.disable("x-powered-by");
   app.use(express.json({ limit: "100kb" }));
@@ -28,7 +34,9 @@ export async function createApp() {
   });
 
   app.use("/api/v1/orders", createOrdersRouter(orderStore));
-  app.use("/api/v1/database", createDatabaseRouter(workbookStore, config.maxWorkbookBytes));
+  app.use("/api/v1/pse", createPseRouter(pseAccess));
+  app.use("/api/v1/configuration", createApplicationSettingsRouter(applicationSettings, pseAccess));
+  app.use("/api/v1/database", createDatabaseRouter(workbookStore, config.maxWorkbookBytes, pseAccess));
 
   app.use("/api", (request, _response, next) => {
     next(new HttpError(404, `Cesta ${request.method} ${request.originalUrl} neexistuje.`));

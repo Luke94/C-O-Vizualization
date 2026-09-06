@@ -29,6 +29,16 @@ body {
   color: var(--text);
 }
 
+.pse-shell { max-width: 900px; margin: 32px auto; padding: 0 20px; }
+.pse-card { background: #fff; border-radius: 18px; padding: 28px; box-shadow: 0 12px 35px rgba(17, 35, 57, .12); display: grid; gap: 16px; }
+.pse-card input { min-height: 44px; border: 1px solid #b8c4d1; border-radius: 8px; padding: 0 12px; font-size: 1rem; }
+.pse-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.password-form { display: grid; gap: 12px; border-top: 1px solid #dce3ea; padding-top: 18px; }
+.password-form label { display: grid; gap: 6px; }
+.mapping-form { display: grid; gap: 10px; border-top: 1px solid #dce3ea; padding-top: 18px; }
+.mapping-form label { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr); gap: 14px; align-items: center; }
+.mapping-form select { min-height: 42px; border: 1px solid #b8c4d1; border-radius: 8px; padding: 6px 10px; min-width: 0; }
+
 button,
 input,
 select {

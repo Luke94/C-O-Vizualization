@@ -1,4 +1,3 @@
-import DataSourceCard from "../common/DataSourceCard.jsx";
 import FilterInput from "../common/FilterInput.jsx";
 import OrderList from "../orders/OrderList.jsx";
 
@@ -102,7 +101,6 @@ export default function MasterView({
         >
           {submitting ? "Odesílám..." : loading ? "Načítám..." : "Poslat"}
         </button>
-        <DataSourceCard meta={meta} onFileLoad={onFileLoad} uploading={uploading} />
       </aside>
     </div>
   );

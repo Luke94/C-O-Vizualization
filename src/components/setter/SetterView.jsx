@@ -1,6 +1,5 @@
 import ComparisonTable from "../comparison/ComparisonTable.jsx";
 import MatchResolver from "../comparison/MatchResolver.jsx";
-import DataSourceCard from "../common/DataSourceCard.jsx";
 import OrderList from "../orders/OrderList.jsx";
 import OrderWarnings from "./OrderWarnings.jsx";
 import SelectedOrderCards from "./SelectedOrderCards.jsx";
@@ -77,7 +76,6 @@ export default function SetterView({
             {actionPending ? "Ukládám..." : "Dokončeno / odstranit"}
           </button>
         </div>
-        <DataSourceCard meta={meta} onFileLoad={onFileLoad} uploading={uploading} compact />
       </aside>
     </div>
   );

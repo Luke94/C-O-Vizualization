@@ -3,6 +3,7 @@ import ModeSwitch from "./components/layout/ModeSwitch.jsx";
 import MasterView from "./components/master/MasterView.jsx";
 import OrderConfirmationModal from "./components/master/OrderConfirmationModal.jsx";
 import SetterView from "./components/setter/SetterView.jsx";
+import PseView from "./components/pse/PseView.jsx";
 import { compareRecords } from "./utils/compare.js";
 import {
   buildOrderDraft,
@@ -179,7 +180,9 @@ export default function App() {
         connected={!ordersState.error}
       />
 
-      {mode === "master" ? (
+      {mode === "pse" ? (
+        <PseView meta={workbookState.meta} headers={workbookState.database.headers} columnMapping={workbookState.columnMapping} onMappingApplied={workbookState.saveMapping} onFileLoad={handleFileLoad} uploading={workbookState.uploading} />
+      ) : mode === "master" ? (
         <MasterView
           inputs={masterInputs}
           onInputChange={handleMasterInputChange}

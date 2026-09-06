@@ -1,7 +1,7 @@
 import express from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-export function createDatabaseRouter(workbookStore, maxWorkbookBytes) {
+export function createDatabaseRouter(workbookStore, maxWorkbookBytes, pseAccess) {
   const router = express.Router();
   const rawWorkbookBody = express.raw({
     type: "application/octet-stream",
@@ -17,6 +17,7 @@ export function createDatabaseRouter(workbookStore, maxWorkbookBytes) {
 
   router.put(
     "/",
+    pseAccess.requireSession.bind(pseAccess),
     rawWorkbookBody,
     asyncHandler(async (request, response) => {
       const encodedFileName = request.get("X-File-Name") || "";

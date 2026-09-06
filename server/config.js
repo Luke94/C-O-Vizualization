@@ -13,6 +13,9 @@ export const config = {
   orderStoreFile: resolveProjectPath(process.env.ORDER_STORE_FILE || "./data/orders.json"),
   workbookFile: resolveProjectPath(process.env.WORKBOOK_FILE || "./data/preparation.xlsx"),
   workbookBackupDirectory: resolveProjectPath(process.env.WORKBOOK_BACKUP_DIR || "./data/backups"),
+  pseSettingsFile: resolveProjectPath(process.env.PSE_SETTINGS_FILE || "./data/pse-settings.json"),
+  applicationSettingsFile: resolveProjectPath(process.env.APPLICATION_SETTINGS_FILE || "./data/application-settings.json"),
+  pseInitialPassword: process.env.PSE_INITIAL_PASSWORD || "PsE53100",
   allowDatabaseUpload: toBoolean(process.env.ALLOW_DATABASE_UPLOAD, true),
   maxWorkbookBytes: toPositiveInteger(process.env.MAX_WORKBOOK_MB, 20) * 1024 * 1024
 };
