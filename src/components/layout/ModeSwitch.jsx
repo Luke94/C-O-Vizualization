@@ -10,9 +10,6 @@ export default function ModeSwitch({ mode, onModeChange, orderCount, connected }
       </div>
 
       <nav className="mode-switch" aria-label="Přepnutí role">
-        <button type="button" className={mode === "master" ? "active" : ""} onClick={() => onModeChange("master")}>
-          Mistr
-        </button>
         <button type="button" className={mode === "setter" ? "active" : ""} onClick={() => onModeChange("setter")}>
           Seřizovač <span>{orderCount}</span>
         </button>

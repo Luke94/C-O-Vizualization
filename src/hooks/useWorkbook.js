@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getDatabaseFileUrl, getDatabaseMeta, uploadDatabase } from "../api/databaseApi.js";
 import { loadRowsFromFile, loadRowsFromUrl } from "../utils/excel.js";
 import { getApplicationSettings } from "../api/pseApi.js";
+import { DEFAULT_DISPLAY_ROWS } from "../config/fields.js";
 
 const EMPTY_DATABASE = { rows: [], sheetName: "", headers: [], pnColumn: "" };
 const META_REFRESH_INTERVAL_MS = 10000;
@@ -14,6 +15,7 @@ export function useWorkbook() {
   const [error, setError] = useState("");
   const updatedAtRef = useRef("");
   const [columnMapping, setColumnMapping] = useState({});
+  const [displayRows, setDisplayRows] = useState(DEFAULT_DISPLAY_ROWS);
   const columnMappingRef = useRef({});
 
   const applyWorkbook = useCallback(async (meta, mapping) => {
@@ -28,6 +30,7 @@ export function useWorkbook() {
       setLoading(true);
       const [meta, settings] = await Promise.all([getDatabaseMeta(), getApplicationSettings()]);
       const mapping = settings?.columnMapping ?? {};
+      setDisplayRows(settings?.displayRows?.length ? settings.displayRows : DEFAULT_DISPLAY_ROWS);
       setColumnMapping(mapping);
       columnMappingRef.current = mapping;
       await applyWorkbook(meta, mapping);
@@ -97,10 +100,14 @@ export function useWorkbook() {
     reload: load,
     replace,
     columnMapping,
+    displayRows,
     async saveMapping(mapping) {
       setColumnMapping(mapping);
       columnMappingRef.current = mapping;
       await applyWorkbook(serverMeta, mapping);
+    },
+    applyDisplayRows(rows) {
+      setDisplayRows(rows);
     }
   };
 }

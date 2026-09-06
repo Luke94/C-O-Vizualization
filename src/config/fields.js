@@ -95,6 +95,12 @@ export const COMPARE_FIELDS = [
   { key: "note", label: "Poznámka" }
 ];
 
+export const DEFAULT_DISPLAY_ROWS = COMPARE_FIELDS.map((field) => ({
+  id: field.key,
+  label: field.label,
+  sourceColumn: EXCEL_COLUMNS[field.key]
+}));
+
 export const FIELD_REFERENCE_IMAGES = {
   clamps: {
     buttonLabel: "Náhled",

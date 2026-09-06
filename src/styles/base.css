@@ -38,6 +38,10 @@ body {
 .mapping-form { display: grid; gap: 10px; border-top: 1px solid #dce3ea; padding-top: 18px; }
 .mapping-form label { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr); gap: 14px; align-items: center; }
 .mapping-form select { min-height: 42px; border: 1px solid #b8c4d1; border-radius: 8px; padding: 6px 10px; min-width: 0; }
+.display-row-editor { display: grid; gap: 8px; }
+.display-row-item { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(260px, 1.2fr) 42px 42px auto; gap: 8px; align-items: center; }
+.small-button, .remove-row-button { min-height: 42px; border: 1px solid #b8c4d1; border-radius: 8px; cursor: pointer; }
+.remove-row-button { padding: 0 12px; color: #8b1b1b; background: #fff2f2; }
 
 button,
 input,

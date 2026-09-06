@@ -54,7 +54,7 @@ export async function createApp() {
   });
 
   if (fs.existsSync(config.clientDirectory)) {
-    app.use(express.static(config.clientDirectory, { index: false, maxAge: "1h" }));
+    app.use(express.static(config.clientDirectory, { index: false, maxAge: 0 }));
 
     // React has no client routes yet, but the fallback keeps IIS deep links safe.
     app.get("*", (_request, response) => {

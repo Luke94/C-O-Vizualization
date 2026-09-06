@@ -29,7 +29,7 @@ Tento způsob používá stejný princip jako KPI Dashboard: Node.js 20 LTS, IIS
 - automatické zálohy starého Excelu v `data/backups/`
 - React build v `dist/client/`
 
-Objednávky už nejsou uložené v prohlížeči. Mistr a seřizovač proto vidí stejná data z různých počítačů.
+Objednávky nejsou uložené v prohlížeči. Seřizovači proto vidí stejná data z různých počítačů. Správu Excelu a zobrazovaných řádků provádí PsE v chráněném rozhraní.
 
 ## Produkční struktura
 

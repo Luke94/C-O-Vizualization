@@ -11,6 +11,6 @@ export function changePsePassword(currentPassword, newPassword) {
   });
 }
 export function getApplicationSettings() { return requestJson("api/v1/configuration"); }
-export function saveColumnMapping(columnMapping) {
-  return requestJson("api/v1/configuration", { method: "PUT", body: JSON.stringify({ columnMapping }) });
+export function saveApplicationSettings(columnMapping, displayRows) {
+  return requestJson("api/v1/configuration", { method: "PUT", body: JSON.stringify({ columnMapping, displayRows }) });
 }

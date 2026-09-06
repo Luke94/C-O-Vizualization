@@ -1,6 +1,6 @@
 # C/O Visualization
 
-Interní React aplikace pro předání objednávky změny výroby od mistra k seřizovači a porovnání aktuálního a následujícího upínání podle sdíleného Excelu.
+Interní React aplikace pro zobrazení objednávek změny výroby seřizovači a porovnání aktuálního a následujícího upínání podle sdíleného Excelu.
 
 ## Architektura
 
@@ -11,6 +11,8 @@ Interní React aplikace pro předání objednávky změny výroby od mistra k se
 - `data/orders.json` — sdílené objednávky pro MVP
 - `dist/client/` — vygenerovaný frontend pro produkční provoz
 - `web.config` — spuštění přes IIS HttpPlatformHandler
+
+PsE rozhraní je chráněné heslem. Umožňuje nahrát nový Excel a nastavit libovolný počet zobrazovaných řádků, jejich názvy, pořadí a zdrojové sloupce podle hlaviček prvního řádku Excelu.
 
 Projekt nepoužívá single-file build ani Vite. Frontend se sestavuje pomocí esbuild a následně jej společně s API servíruje jeden Node/Express proces.
 

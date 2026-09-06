@@ -8,7 +8,7 @@ export class ApplicationSettingsStore {
   async initialize() {
     await fs.mkdir(path.dirname(this.filePath), { recursive: true });
     try { await fs.access(this.filePath); }
-    catch { await this.#write({ columnMapping: {} }); }
+    catch { await this.#write({ columnMapping: {}, displayRows: [] }); }
   }
 
   async get() {
@@ -22,7 +22,15 @@ export class ApplicationSettingsStore {
       throw new HttpError(400, "Mapování sloupců nemá platný formát.");
     }
     const columnMapping = Object.fromEntries(Object.entries(mapping).map(([key, value]) => [String(key), String(value ?? "").trim()]));
-    const settings = { columnMapping };
+    const displayRows = Array.isArray(input?.displayRows)
+      ? input.displayRows.map((row, index) => ({
+          id: String(row?.id || `row-${index + 1}`),
+          label: String(row?.label ?? "").trim(),
+          sourceColumn: String(row?.sourceColumn ?? "").trim()
+        })).filter((row) => row.label && row.sourceColumn)
+      : [];
+    if (displayRows.length > 100) throw new HttpError(400, "Lze nastavit nejvýše 100 zobrazovaných řádků.");
+    const settings = { columnMapping, displayRows };
     await this.#write(settings);
     return settings;
   }
