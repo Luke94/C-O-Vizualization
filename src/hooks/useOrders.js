@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createOrder, deleteOrder, listOrders, updateOrder } from "../api/ordersApi.js";
+import { completeOrder, createOrder, listOrders, startOrder } from "../api/ordersApi.js";
 import { sortOrders } from "../domain/orders.js";
 
 const REFRESH_INTERVAL_MS = 3000;
@@ -41,14 +41,14 @@ export function useOrders() {
     return result.order;
   }, []);
 
-  const markReady = useCallback(async (orderId) => {
-    const result = await updateOrder(orderId, { prepared: true });
+  const start = useCallback(async (orderId) => {
+    const result = await startOrder(orderId);
     setOrders((current) => current.map((order) => (order.id === orderId ? result.order : order)));
     return result.order;
   }, []);
 
-  const remove = useCallback(async (orderId) => {
-    await deleteOrder(orderId);
+  const complete = useCallback(async (orderId) => {
+    await completeOrder(orderId);
     setOrders((current) => current.filter((order) => order.id !== orderId));
   }, []);
 
@@ -59,7 +59,7 @@ export function useOrders() {
     setError,
     refresh,
     add,
-    markReady,
-    remove
+    start,
+    complete
   };
 }

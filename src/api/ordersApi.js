@@ -23,3 +23,11 @@ export function deleteOrder(orderId) {
     method: "DELETE"
   });
 }
+
+export function startOrder(orderId) {
+  return requestJson(`api/v1/orders/${encodeURIComponent(orderId)}/start`, { method: "POST" });
+}
+
+export function completeOrder(orderId) {
+  return requestJson(`api/v1/orders/${encodeURIComponent(orderId)}/complete`, { method: "POST" });
+}

@@ -1,7 +1,7 @@
 import express from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-export function createOrdersRouter(orderStore) {
+export function createOrdersRouter(orderStore, andonService) {
   const router = express.Router();
 
   router.get(
@@ -16,6 +16,23 @@ export function createOrdersRouter(orderStore) {
     asyncHandler(async (request, response) => {
       const order = await orderStore.create(request.body);
       response.status(201).json({ order });
+    })
+  );
+
+  router.post(
+    "/:orderId/start",
+    asyncHandler(async (request, response) => {
+      response.json({ order: await orderStore.start(request.params.orderId) });
+    })
+  );
+
+  router.post(
+    "/:orderId/complete",
+    asyncHandler(async (request, response) => {
+      const order = (await orderStore.list()).find((item) => item.id === request.params.orderId);
+      if (!order) return response.status(404).json({ message: "Objednávka nebyla nalezena." });
+      await andonService.complete(order);
+      response.json({ historyEntry: await orderStore.complete(request.params.orderId) });
     })
   );
 

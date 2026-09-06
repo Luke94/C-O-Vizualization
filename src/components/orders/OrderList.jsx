@@ -10,7 +10,7 @@ export default function OrderList({ orders, selectedOrderId, onSelectOrder }) {
             <button
               key={order.id}
               type="button"
-              className={`order-item priority-${order.priority} ${order.prepared ? "prepared" : ""} ${
+              className={`order-item priority-${order.priority} ${
                 selectedOrderId === order.id ? "selected" : ""
               }`}
               onClick={() => onSelectOrder(order.id)}
@@ -20,8 +20,7 @@ export default function OrderList({ orders, selectedOrderId, onSelectOrder }) {
                 {order.currentNoTool ? "NENÍ TOOL" : order.currentTool} → {order.nextTool}
               </span>
               <span className="order-meta">
-                {order.prepared ? "Připraveno" : `Priorita ${order.priority}`}
-                {order.prepared ? <b>✓</b> : null}
+                Priorita {order.priority}
               </span>
             </button>
           ))}

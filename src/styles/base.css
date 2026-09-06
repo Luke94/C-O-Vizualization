@@ -51,6 +51,10 @@ body {
 .pse-card > .file-card { border-color: #46516d; box-shadow: none; }
 .pse-card .primary-button { color: #fff; background: #1259d8; }
 .pse-card .primary-button:hover, .pse-card .secondary-button:hover, .pse-card .small-button:hover:not(:disabled), .pse-card .remove-row-button:hover { filter: brightness(1.12); }
+.history-table-wrap { overflow-x: auto; }
+.history-table { width: 100%; border-collapse: collapse; color: var(--text); }
+.history-table th, .history-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255, 255, 255, .12); text-align: left; white-space: nowrap; }
+.history-table th { color: #aebbd0; font-size: 12px; text-transform: uppercase; }
 
 button,
 input,

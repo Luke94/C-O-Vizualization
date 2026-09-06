@@ -11,6 +11,7 @@ export const config = {
   port: toPositiveInteger(process.env.HTTP_PLATFORM_PORT || process.env.PORT, 3000),
   clientDirectory: path.join(projectRoot, "dist", "client"),
   orderStoreFile: resolveProjectPath(process.env.ORDER_STORE_FILE || "./data/orders.json"),
+  orderHistoryFile: resolveProjectPath(process.env.ORDER_HISTORY_FILE || "./data/order-history.json"),
   workbookFile: resolveProjectPath(process.env.WORKBOOK_FILE || "./data/preparation.xlsx"),
   workbookBackupDirectory: resolveProjectPath(process.env.WORKBOOK_BACKUP_DIR || "./data/backups"),
   pseSettingsFile: resolveProjectPath(process.env.PSE_SETTINGS_FILE || "./data/pse-settings.json"),

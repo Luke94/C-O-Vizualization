@@ -3,7 +3,7 @@ export default function SelectedOrderCards({ order }) {
     return (
       <section className="selected-order-empty">
         <h2>Žádná objednávka</h2>
-        <p>Mistr zatím nic neposlal.</p>
+        <p>Zatím nebyla přijata žádná objednávka.</p>
       </section>
     );
   }

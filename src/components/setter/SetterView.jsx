@@ -10,8 +10,7 @@ export default function SetterView({
   selectedOrder,
   selectedOrderId,
   onSelectOrder,
-  onMarkReady,
-  onRemoveOrder,
+  onCompleteOrder,
   actionPending,
   resolution,
   currentSelectedIndex,
@@ -31,7 +30,7 @@ export default function SetterView({
           currentRecord={resolution.currentRecord}
           nextRecord={resolution.nextRecord}
           emptyTitle="Seřizovač"
-          emptyMessage="Vyber objednávku od mistra. Po výběru se zobrazí porovnání aktuálního a dalšího toolu."
+            emptyMessage="Vyber objednávku. Po výběru se zobrazí porovnání aktuálního a dalšího toolu."
         />
 
         <div className="messages">
@@ -62,18 +61,10 @@ export default function SetterView({
           <button
             className="ready-button"
             type="button"
-            onClick={onMarkReady}
-            disabled={!selectedOrder || selectedOrder.prepared || actionPending}
-          >
-            {selectedOrder?.prepared ? "Připraveno ✓" : actionPending ? "Ukládám..." : "Označit připraveno ✓"}
-          </button>
-          <button
-            className="done-button"
-            type="button"
-            onClick={onRemoveOrder}
+            onClick={onCompleteOrder}
             disabled={!selectedOrder || actionPending}
           >
-            {actionPending ? "Ukládám..." : "Dokončeno / odstranit"}
+            {actionPending ? "Dokončuji..." : "Dokončit přípravu ✓"}
           </button>
         </div>
       </aside>

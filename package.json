@@ -1,7 +1,7 @@
 {
   "name": "c-o-visualization",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.4.2",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -10,8 +10,8 @@
     "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
     "start": "node server/server.js",
-    "check": "node --check server/server.js && node --check server/app.js && node --check server/config.js && node --check scripts/build.js && node --check scripts/dev.js && node --check scripts/client-build.js",
-    "test": "node --test server/tests/orderStore.test.js"
+    "check": "node --check server/server.js && node --check server/app.js && node --check server/config.js && node --check server/services/andonService.js && node --check scripts/build.js && node --check scripts/dev.js && node --check scripts/client-build.js",
+    "test": "node --test server/tests/*.test.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

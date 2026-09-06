@@ -30,6 +30,7 @@ export default function App() {
     const selectedStillExists = orders.some((order) => order.id === selectedOrderId);
     if (!selectedOrderId || !selectedStillExists) {
       setSelectedOrderId(orders[0].id);
+      ordersState.start(orders[0].id).catch((requestError) => ordersState.setError(requestError.message));
     }
   }, [orders, selectedOrderId]);
 
@@ -51,12 +52,12 @@ export default function App() {
   );
 
   const visibleError = workbookState.error || ordersState.error;
-  async function handleMarkReady() {
+  async function handleCompleteOrder() {
     if (!selectedOrder) return;
 
     try {
       setActionPending(true);
-      await ordersState.markReady(selectedOrder.id);
+      await ordersState.complete(selectedOrder.id);
     } catch (requestError) {
       ordersState.setError(requestError.message);
     } finally {
@@ -64,16 +65,12 @@ export default function App() {
     }
   }
 
-  async function handleRemoveOrder() {
-    if (!selectedOrder) return;
-
+  async function handleSelectOrder(orderId) {
+    setSelectedOrderId(orderId);
     try {
-      setActionPending(true);
-      await ordersState.remove(selectedOrder.id);
+      await ordersState.start(orderId);
     } catch (requestError) {
       ordersState.setError(requestError.message);
-    } finally {
-      setActionPending(false);
     }
   }
 
@@ -98,7 +95,6 @@ export default function App() {
         mode={mode}
         onModeChange={setMode}
         orderCount={orders.length}
-        connected={!ordersState.error}
       />
 
       {mode === "pse" ? (
@@ -109,9 +105,8 @@ export default function App() {
           orders={orders}
           selectedOrder={selectedOrder}
           selectedOrderId={selectedOrderId}
-          onSelectOrder={setSelectedOrderId}
-          onMarkReady={handleMarkReady}
-          onRemoveOrder={handleRemoveOrder}
+          onSelectOrder={handleSelectOrder}
+          onCompleteOrder={handleCompleteOrder}
           actionPending={actionPending}
           resolution={selectedResolution}
           currentSelectedIndex={currentSelectedIndex}

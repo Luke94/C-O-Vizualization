@@ -24,9 +24,10 @@ Tento způsob používá stejný princip jako KPI Dashboard: Node.js 20 LTS, IIS
 
 - React frontend v čistém JavaScriptu
 - Express API v čistém JavaScriptu
-- sdílené objednávky v `data/orders.json`
+- objednávky synchronizované z Andon SSRN v `data/orders.json`
 - sdílený Excel v `data/preparation.xlsx`
 - automatické zálohy starého Excelu v `data/backups/`
+- SOAP integraci `GetEvents` / `ProcessEvent`
 - React build v `dist/client/`
 
 Objednávky nejsou uložené v prohlížeči. Seřizovači proto vidí stejná data z různých počítačů. Správu Excelu a zobrazovaných řádků provádí PsE v chráněném rozhraní.
@@ -55,7 +56,7 @@ C-O-VISUALIZATION\
 |---|---|
 | Node.js | 20 LTS, Windows x64 |
 | IIS | HttpPlatformHandler nainstalovaný |
-| Oprávnění | App Pool účet musí mít čtení a zápis do sdílené složky |
+| Oprávnění | App Pool účet musí mít čtení a zápis do sdílené složky a síťový přístup k SSRN |
 
 Pokud už KPI Dashboard na stejném serveru běží přes Node.js 20 a HttpPlatformHandler, není potřeba instalovat tyto komponenty znovu.
 
@@ -236,13 +237,12 @@ Očekávaná odpověď:
 {"status":"ok","timestamp":"..."}
 ```
 
-4. Otestovat na dvou počítačích:
-   - v režimu Mistr vytvořit objednávku
-   - v režimu Seřizovač ověřit, že se během několika sekund zobrazí
-   - označit objednávku jako připravenou
-   - ověřit změnu na prvním počítači
+4. V PsE zkontrolovat nastavení Andon API. Výchozí budova je `563`, osoba `11590`.
+5. Nechat vytvořit zkušební Andon typu `Připrav se na upínání` a ověřit, že se během několika sekund zobrazí seřizovači.
+6. Před ostrým použitím potvrdit s vlastníkem SSRN význam hodnoty stavu `3`, potom zkušební objednávku dokončit a ověřit stav Andonu.
+7. Uzavřít jiný Andon z mobilu a ověřit jeho automatické zmizení z aplikace.
 
-5. Otestovat načtení Excelu a porovnání toolů.
+8. Otestovat načtení Excelu a porovnání toolů.
 
 ---
 

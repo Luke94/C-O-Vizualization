@@ -53,12 +53,6 @@ export function validateOrderDraft(order) {
 
 export function sortOrders(orders) {
   return [...orders].sort((a, b) => {
-    if (a.prepared !== b.prepared) return a.prepared ? -1 : 1;
-
-    if (a.prepared && b.prepared) {
-      return toTimestamp(b.preparedAt ?? b.createdAt) - toTimestamp(a.preparedAt ?? a.createdAt);
-    }
-
     const priorityDifference = Number(a.priority) - Number(b.priority);
     if (priorityDifference !== 0) return priorityDifference;
 

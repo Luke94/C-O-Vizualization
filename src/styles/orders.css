@@ -244,21 +244,16 @@
   outline-offset: 1px;
 }
 
-.order-item.prepared {
-  color: #06210c;
-  background: #00b81f;
-}
-
-.order-item.priority-1:not(.prepared) {
+.order-item.priority-1 {
   color: #06102d;
   background: #ffb800;
 }
 
-.order-item.priority-2:not(.prepared) {
+.order-item.priority-2 {
   background: #1259d8;
 }
 
-.order-item.priority-3:not(.prepared) {
+.order-item.priority-3 {
   background: #2d4859;
 }
 

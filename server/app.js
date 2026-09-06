@@ -11,10 +11,11 @@ import { createPseRouter } from "./routes/pse.js";
 import { ApplicationSettingsStore } from "./services/applicationSettingsStore.js";
 import { createApplicationSettingsRouter } from "./routes/applicationSettings.js";
 import { HttpError } from "./utils/httpError.js";
+import { AndonService } from "./services/andonService.js";
 
 export async function createApp() {
   const app = express();
-  const orderStore = new OrderStore(config.orderStoreFile);
+  const orderStore = new OrderStore(config.orderStoreFile, config.orderHistoryFile);
   const workbookStore = new WorkbookStore({
     filePath: config.workbookFile,
     backupDirectory: config.workbookBackupDirectory,
@@ -25,6 +26,8 @@ export async function createApp() {
   const applicationSettings = new ApplicationSettingsStore(config.applicationSettingsFile);
 
   await Promise.all([orderStore.initialize(), workbookStore.initialize(), pseAccess.initialize(), applicationSettings.initialize()]);
+  const andonService = new AndonService(applicationSettings, orderStore);
+  andonService.start();
 
   app.disable("x-powered-by");
   app.use(express.json({ limit: "100kb" }));
@@ -33,8 +36,8 @@ export async function createApp() {
     response.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  app.use("/api/v1/orders", createOrdersRouter(orderStore));
-  app.use("/api/v1/pse", createPseRouter(pseAccess));
+  app.use("/api/v1/orders", createOrdersRouter(orderStore, andonService));
+  app.use("/api/v1/pse", createPseRouter(pseAccess, orderStore, applicationSettings, andonService));
   app.use("/api/v1/configuration", createApplicationSettingsRouter(applicationSettings, pseAccess));
   app.use("/api/v1/database", createDatabaseRouter(workbookStore, config.maxWorkbookBytes, pseAccess));
 

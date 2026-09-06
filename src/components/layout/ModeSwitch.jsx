@@ -1,12 +1,9 @@
-export default function ModeSwitch({ mode, onModeChange, orderCount, connected }) {
+export default function ModeSwitch({ mode, onModeChange, orderCount }) {
   return (
     <header className="mode-switch-bar">
       <div>
         <strong>C/O Visualization</strong>
-        <span className="connection-label">
-          <i className={connected ? "online" : "offline"} aria-hidden="true" />
-          {connected ? "Sdílené objednávky aktivní" : "Server není dostupný"}
-        </span>
+        <span className="connection-label">TE Connectivity</span>
       </div>
 
       <nav className="mode-switch" aria-label="Přepnutí role">

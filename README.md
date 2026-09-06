@@ -67,3 +67,6 @@ Výsledná složka `deploy\release\` obsahuje sestavený frontend, server, runti
 - IIS identita potřebuje právo zápisu do `data/` a `logs/`.
 - Nahrání nového Excelu lze vypnout přes `ALLOW_DATABASE_UPLOAD=false`.
 - JSON úložiště je vhodné pro jednu instanci aplikace a současný MVP provoz. Přechod na MSSQL lze později udělat bez změny React UI.
+# Andon integrace
+
+SOAP služba SSRN se synchronizuje automaticky. Výchozí hodnoty jsou budova `563`, osoba `11590` a typ události `Připrav se na upínání`. Před ostrým použitím ověřte s vlastníkem Andonu číslo stavu „hotovo“; výchozí hodnota je `3`.

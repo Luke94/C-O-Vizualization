@@ -27,12 +27,24 @@ test("order lifecycle is persisted", async (context) => {
   assert.equal(created.machine, "S-001AA");
   assert.equal((await store.list()).length, 1);
 
-  const prepared = await store.update(created.id, { prepared: true });
-  assert.equal(prepared.prepared, true);
-  assert.ok(prepared.preparedAt);
+  const started = await store.start(created.id);
+  assert.ok(started.startedAt);
 
-  await store.remove(created.id);
+  const completed = await store.complete(created.id);
+  assert.ok(completed.completedAt);
+  assert.ok(completed.durationMs >= 0);
   assert.deepEqual(await store.list(), []);
+  assert.equal((await store.listHistory()).length, 1);
+});
+
+test("opening an order again resets its timer", async (context) => {
+  const { directory, store } = await createTemporaryStore();
+  context.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const created = await store.create({ machine: "001", currentTool: "100", nextTool: "200", priority: "2" });
+  const first = await store.start(created.id);
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  const second = await store.start(created.id);
+  assert.ok(new Date(second.startedAt) >= new Date(first.startedAt));
 });
 
 test("invalid order is rejected", async (context) => {
